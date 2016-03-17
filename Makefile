@@ -31,4 +31,4 @@ build:
 	browserify app.js | $(UGLIFY) -c -m -o index.js
 
 pushall:
-	git push origin master && git push origin gh-pages
+	git push origin gh-pages
