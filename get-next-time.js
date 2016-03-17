@@ -31,8 +31,8 @@ function GetNextTime(createOpts) {
   // Remember: Triplet eighth notes are 2/3 of an eighth note, not 1/3.
   function getDurationLength(durationString) {
     var length;
-    var magnitude = parseInt(durationString.charAt(0), 10);
-    var division = durationString.charAt(1);
+    var magnitude = parseInt(durationString.substr(0, durationString.length - 1), 10);
+    var division = durationString.substr(-1);
 
     if (division === 'n') {
       length = wholeNoteSeconds / magnitude;

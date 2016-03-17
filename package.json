@@ -18,12 +18,16 @@
   },
   "homepage": "https://github.com/jimkang/systemjams",
   "devDependencies": {
-    "tape": "^3.0.3"
+    "tape": "^3.0.3",
+    "uglify-js": "^2.6.2"
   },
   "dependencies": {
     "browserify": "^8.1.3",
-    "lodash": "^3.6.0",
+    "lodash.curry": "^4.0.0",
     "lsystem": "^1.2.0",
+    "midi": "mudcube/MIDI.js",
+    "probable": "^2.0.1",
+    "smash": "0.0.15",
     "tap": "^5.7.0",
     "tone": "^0.6.1",
     "tracery-grammar": "^2.7.2",

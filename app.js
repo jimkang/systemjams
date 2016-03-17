@@ -1,8 +1,24 @@
-var Tone = require('tone');
+// var Tone = require('tone');
 var tracery = require('tracery-grammar');
 var GetNextTime = require('./get-next-time');
+var play = require('./play');
+var probable = require('probable');
 
-var bpm = 90;
+var offsetsForLetters = {
+  'A': 0,
+  'A#': 1,
+  'B': 2,
+  'C': 3,
+  'C#': 4,
+  'D': 5,
+  'D#': 6,
+  'E': 7,
+  'F': 8,
+  'F#': 9,
+  'G': 10,
+  'G#': 11  
+}
+
 
 var grammar = tracery.createGrammar({
   "origin": [
@@ -52,116 +68,90 @@ var grammar = tracery.createGrammar({
   ]
 });
 
+var bpm = 120 + probable.roll(120);
+document.querySelector('#bpm').textContent = bpm;
+
 var getNextTime = GetNextTime({
-  bpm: 90
+  bpm: bpm
 });
 
-function addStartTime(lastAttack, attack) {
-  attack.start = getNextTime(lastAttack);
-  return attack;
-}
+// function addStartTime(lastAttack, attack) {
+//   attack.start = getNextTime(lastAttack);
+//   return attack;
+// }
 
 var song = grammar.flatten('#origin#');
 
 song = song.replace(/ /g, ',');
-var events = song.split(',').map(parsePair);
 
-function eventIsValid(e) { return e.pitch.indexOf('n') === -1; }
-var filtered = events.filter(eventIsValid);
-if (filtered.length !== events.length) {
-  console.log('Some events were invalid; had to filter them out.');
-  events = filtered;
-}
 
-debugger;
-events.reduce(addStartTime, {
-  start: 0
-});
+var notes = song.split(',').map(parsePair);
+play(notes);
 
-console.log(events);
+// function eventIsValid(e) { return e.pitch.indexOf('n') === -1; }
+
+// var filtered = events.filter(eventIsValid);
+// if (filtered.length !== events.length) {
+//   console.log('Some events were invalid; had to filter them out.');
+//   events = filtered;
+// }
+
+// events.reduce(addStartTime, {
+//   start: 0
+// });
+
+// console.log(events);
 
 function parsePair(pair) {
   var parts = pair.split('-');
   return {
     pitch: parts[0],
-    duration: parts[1]
+    duration: getNextTime({
+      duration: parts[1]
+    }),
+    velocity: 127 * 0.9
   };
 }
 
-var bass = new Tone.MonoSynth({
-      "volume" : 1,
-      "envelope" : {
-        "attack" : 0.1,
-        "decay" : 0.3,
-        "release" : 2,
-      },
-      "filterEnvelope" : {
-        "attack" : 0.001,
-        "decay" : 0.01,
-        "sustain" : 0.5,
-        "baseFrequency" : 200,
-        "octaves" : 2.6
-      }
-    }).toMaster();
-
-
-// var synth = new Tone.SimpleSynth().toMaster();
-
-// var part = new Tone.Part(playAttack, attacks);
-// part.loop = true;
-// part.loopEnd = "1m";
-// part.humanize = true;
-// part.start('1m');
-
-
-
-
-    // /**
-    //  *  PIANO
-    //  */
-    // var piano = new Tone.PolySynth(4, Tone.SimpleSynth, {
-    //   "volume" : -8,
-    //   "oscillator" : {
-    //     "partials" : [1, 2, 1],
-    //   },
-    //   "portamento" : 0.05
-    // }).toMaster()
-
-    // var cChord = ["C4", "E4", "G4", "B4"];
-    // var dChord = ["D4", "F4", "A4", "C5"];
-    // var gChord = ["B3", "D4", "E4", "A4"];
-
-    // var pianoPart = new Tone.Part(function(time, chord){
-    //   piano.triggerAttackRelease(chord, "8n", time);
-    // }, [["0:0:2", cChord], ["0:1", cChord], ["0:1:3", dChord], ["0:2:2", cChord], ["0:3", cChord], ["0:3:2", gChord]]).start("2m");
-
-    // pianoPart.loop = true;
-    // pianoPart.loopEnd = "1m";
-    // pianoPart.humanize = true;
-
-
-
-// Tone.Transport.bpm.value = bpm;
-setTimeout(kickOff, 2000);
-
-function kickOff() {
-  Tone.Transport.start();
-  setTimeout(scheduleEvents, 1000);
+function letterPitchToMidiPitch(letterPitch) {
+  var number = parseInt(letterPitch.substr('-1'));
+  var letter = letterPitch.substr(0, letterPitch.length - 1);
+  return number * 12 + offsetsForLetters[letter];
 }
 
-function scheduleEvents() {
-  events.forEach(scheduleEvent);
-}
+// var bass = new Tone.MonoSynth({
+//       "volume" : 1,
+//       "envelope" : {
+//         "attack" : 0.1,
+//         "decay" : 0.3,
+//         "release" : 2,
+//       },
+//       "filterEnvelope" : {
+//         "attack" : 0.001,
+//         "decay" : 0.01,
+//         "sustain" : 0.5,
+//         "baseFrequency" : 200,
+//         "octaves" : 2.6
+//       }
+//     }).toMaster();
 
-function scheduleEvent(event) {
-  // setTimeout(playEvent, event.start);
-  Tone.Transport.scheduleOnce(playEvent, event.start);
 
-  function playEvent() {
-    bass.triggerAttackRelease(event.pitch, event.duration);
-  }
-}
-// synth.triggerAttackRelease('C4', '8n');
+// setTimeout(kickOff, 2000);
 
-//play a middle c for the duration of an 8th note
-// synth.triggerAttackRelease('C4', '8n');
+// function kickOff() {
+//   Tone.Transport.start();
+//   setTimeout(scheduleEvents, 1000);
+// }
+
+// function scheduleEvents() {
+//   events.forEach(scheduleEvent);
+// }
+
+// function scheduleEvent(event) {
+//   // setTimeout(playEvent, event.start);
+//   Tone.Transport.scheduleOnce(playEvent, event.start);
+
+//   function playEvent() {
+//     bass.triggerAttackRelease(event.pitch, event.duration);
+//   }
+// }

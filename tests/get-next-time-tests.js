@@ -34,6 +34,15 @@ var testCases = [
     expected: 0.35 + 0.686
   },
   {
+    name: 'Sixteenth note',
+    event: {
+      start: 2.667,
+      duration: '16n'
+    },
+    bpm: 60,
+    expected: 2.917
+  },
+  {
     name: 'Zero start',
     event: undefined,
     bpm: 400,
@@ -66,6 +75,7 @@ function runTest(testCase) {
     var getNextTime = GetNextTime({
       bpm: testCase.bpm
     });
+    // console.log(getNextTime(testCase.event));
     t.ok(
       withinRange(
         getNextTime(testCase.event),
