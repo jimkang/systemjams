@@ -1,0 +1,32 @@
+{
+  "name": "systemjams",
+  "version": "1.0.0",
+  "description": "Make music from L-systems.",
+  "main": "index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jimkang/systemjams.git"
+  },
+  "keywords": [],
+  "author": "Jim Kang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jimkang/systemjams/issues"
+  },
+  "homepage": "https://github.com/jimkang/systemjams",
+  "devDependencies": {
+    "tape": "^3.0.3"
+  },
+  "dependencies": {
+    "browserify": "^8.1.3",
+    "lodash": "^3.6.0",
+    "lsystem": "^1.2.0",
+    "tap": "^5.7.0",
+    "tone": "^0.6.1",
+    "tracery-grammar": "^2.7.2",
+    "uglify-js": "^2.4.17"
+  }
+}
