@@ -1,3 +1,5 @@
+UGLIFY = node_modules/.bin/uglifyjs
+
 test:
 	node tests/get-next-time-tests.js
 
@@ -26,7 +28,7 @@ raw-midi-lib:
 	# Need to edit out the `require`s in the resulting file after running this.
 
 build:
-	$(BROWSERIFY) app.js | $(UGLIFY) -c -m -o index.js
+	browserify app.js | $(UGLIFY) -c -m -o index.js
 
 pushall:
 	git push origin master && git push origin gh-pages
